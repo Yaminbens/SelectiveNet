@@ -59,6 +59,7 @@ def train_full_coverage(model_name, model_cls, coverages, model_baseline=None, r
         results[coverage]["percentage"] = 1 - results[coverage]["selective_risk"] / results[coverage]["baseline_risk"]
 
     save_dict("results/{}.json".format(model_name), results)
+
 def train_profile(model_name, model_cls, coverages, model_baseline=None, regression=False, alpha=0.5):
     results = {}
     for coverage_rate in coverages:

@@ -10,7 +10,7 @@ MODELS = {"cifar_10": cifar10Selective}
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='cifar_10')
 
-parser.add_argument('--model_name', type=str, default='test')
+parser.add_argument('--model_name', type=str, default='full_cov_2')
 parser.add_argument('--baseline', type=str, default='none')
 parser.add_argument('--alpha', type=float, default=0.5)
 

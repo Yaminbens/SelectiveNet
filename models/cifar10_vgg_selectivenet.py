@@ -214,6 +214,10 @@ class cifar10vgg:
         c = self.lamda
         lamda = 32
 
+        def selective_coverage(y_true, y_pred):
+            loss = K.categorical_crossentropy(
+                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1])
+
         def selective_loss(y_true, y_pred):
             loss = K.categorical_crossentropy(
                 K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1],
