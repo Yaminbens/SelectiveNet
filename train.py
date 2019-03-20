@@ -26,3 +26,8 @@ coverages = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
 if baseline_name == "none":
     results = train_full_coverage(model_name, cifar10Selective, coverages, alpha=args.alpha)
 
+else:
+    model_baseline = model_cls(train=to_train("{}.h5".format(baseline_name)),
+                               filename="{}.h5".format(baseline_name),
+                               baseline=True)
+    results = train_profile(model_name, model_cls, coverages, model_baseline=model_baseline, alpha=args.alpha)

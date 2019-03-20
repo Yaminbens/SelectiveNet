@@ -214,14 +214,16 @@ class cifar10vgg:
         c = self.lamda
         lamda = 32
 
-        def selective_coverage(y_true, y_pred):
-            loss = K.categorical_crossentropy(
-                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1])
+        def beta_loss(y_true, y_pred):
+            loss = -K.mean(y_pred[:, -1]) + lamda * K.maximum(c - K.categorical_crossentropy(
+                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1]), 0) ** 2
+            return loss
+
 
         def selective_loss(y_true, y_pred):
             loss = K.categorical_crossentropy(
-                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1],
-                y_pred[:, :-1]) + lamda * K.maximum(-K.mean(y_pred[:, -1]) + c, 0) ** 2
+                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1]) \
+                   + lamda * K.maximum(-K.mean(y_pred[:, -1]) + c, 0) ** 2
             return loss
 
         def selective_acc(y_true, y_pred):
@@ -234,8 +236,6 @@ class cifar10vgg:
         def coverage(y_true, y_pred):
             g = K.cast(K.greater(y_pred[:, -1], 0.5), K.floatx())
             return K.mean(g)
-
-
 
         # training parameters
         batch_size = 128
@@ -269,7 +269,7 @@ class cifar10vgg:
         # optimization details
         sgd = optimizers.SGD(lr=learning_rate, decay=lr_decay, momentum=0.9, nesterov=True)
 
-        model.compile(loss=[selective_loss, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
+        model.compile(loss=[beta_loss, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
                       optimizer=sgd, metrics=['accuracy', selective_acc, coverage])
 
         historytemp = model.fit_generator(my_generator(datagen.flow, self.x_train, self.y_train,
@@ -277,7 +277,6 @@ class cifar10vgg:
                                           steps_per_epoch=self.x_train.shape[0] // batch_size,
                                           epochs=maxepoches, callbacks=[reduce_lr],
                                           validation_data=(self.x_test, [self.y_test, self.y_test[:, :-1]]))
-
 
         with open("checkpoints/{}_history.pkl".format(self.filename[:-3]), 'wb') as handle:
             pickle.dump(historytemp.history, handle, protocol=pickle.HIGHEST_PROTOCOL)
