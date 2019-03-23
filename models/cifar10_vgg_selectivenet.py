@@ -270,11 +270,11 @@ class cifar10vgg:
         sgd = optimizers.SGD(lr=learning_rate, decay=lr_decay, momentum=0.9, nesterov=True)
 
         if mode == 'coverage_given_risk':
-            loss = coverage_loss
+            loss_function = coverage_loss
         elif mode == 'risk_given_coverage':
-            loss = selective_loss
+            loss_function = selective_loss
 
-        model.compile(loss=[loss, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
+        model.compile(loss=[loss_function, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
                       optimizer=sgd, metrics=['accuracy', selective_acc, coverage])
 
         historytemp = model.fit_generator(my_generator(datagen.flow, self.x_train, self.y_train,
