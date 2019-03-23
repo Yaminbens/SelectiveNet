@@ -60,6 +60,34 @@ def train_full_coverage(model_name, model_cls, coverages, model_baseline=None, r
 
     save_dict("results/{}.json".format(model_name), results)
 
+def train_max_risk(model_name, model_cls, coverages, mode, model_baseline=None, regression=False, alpha=0.5):
+    results = {}
+    print("training model with full coverage")
+
+    coverage_rate = 1.0
+    risk_rate = 0.048
+
+    model = model_cls(train=True,
+                      filename="{}_{}.h5".format(model_name, risk_rate),
+                      coverage=coverage_rate,
+                      risk=risk_rate,
+                      mode=mode,
+                      alpha=alpha)
+
+    loss, coverage = calc_selective_risk(model, regression)
+    results[coverage] = {"lambda": risk_rate, "selective_risk": loss}
+
+    if model_baseline is not None:
+        if regression:
+            results[coverage]["baseline_risk"] = (model_baseline.selective_risk_at_coverage(coverage))
+
+        else:
+
+            results[coverage]["baseline_risk"] = (1 - model_baseline.selective_risk_at_coverage(coverage))
+        results[coverage]["percentage"] = 1 - results[coverage]["selective_risk"] / results[coverage]["baseline_risk"]
+
+    save_dict("results/{}.json".format(model_name), results)
+
 def train_profile(model_name, model_cls, coverages, model_baseline=None, regression=False, alpha=0.5):
     results = {}
     for coverage_rate in coverages:

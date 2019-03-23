@@ -4,7 +4,6 @@ import keras
 import numpy as np
 import pickle
 from keras import backend as K
-from keras import backend as K
 from keras import optimizers
 from keras import regularizers
 from keras.datasets import cifar10
@@ -20,14 +19,15 @@ from selectivnet_utils import *
 
 
 class cifar10vgg:
-    def __init__(self, train=True, filename="weightsvgg.h5", coverage=0.8, alpha=0.5, baseline=False):
-        self.lamda = coverage
+    def __init__(self, train=True, filename="weightsvgg.h5", coverage=0.8, risk=0.048, mode=None,alpha=0.5, baseline=False):
+        self.coverage = coverage
+        self.risk = risk
         self.alpha = alpha
         self.mc_dropout_rate = K.variable(value=0)
         self.num_classes = 10
         self.weight_decay = 0.0005
         self._load_data()
-
+        self.mode=mode
         self.x_shape = self.x_train.shape[1:]
         self.filename = filename
 
@@ -36,7 +36,7 @@ class cifar10vgg:
             self.alpha = 0
 
         if train:
-            self.model = self.train(self.model)
+            self.model = self.train(self.model, self.mode)
         else:
             self.model.load_weights("checkpoints/{}".format(self.filename))
 
@@ -210,15 +210,15 @@ class cifar10vgg:
         self.y_train = keras.utils.to_categorical(y_train, self.num_classes + 1)
         self.y_test = keras.utils.to_categorical(y_test_label, self.num_classes + 1)
 
-    def train(self, model):
-        c = self.lamda
+    def train(self, model, mode):
+        c = self.coverage
+        r = self.risk
         lamda = 32
 
-        def beta_loss(y_true, y_pred):
-            loss = -K.mean(y_pred[:, -1]) + lamda * K.maximum(c - K.categorical_crossentropy(
+        def coverage_loss(y_true, y_pred):
+            loss = -K.mean(y_pred[:, -1]) + lamda * K.maximum(r - K.categorical_crossentropy(
                 K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1]), 0) ** 2
             return loss
-
 
         def selective_loss(y_true, y_pred):
             loss = K.categorical_crossentropy(
@@ -269,7 +269,12 @@ class cifar10vgg:
         # optimization details
         sgd = optimizers.SGD(lr=learning_rate, decay=lr_decay, momentum=0.9, nesterov=True)
 
-        model.compile(loss=[beta_loss, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
+        if mode == 'coverage_given_risk':
+            loss = coverage_loss
+        elif mode == 'risk_given_coverage':
+            loss = selective_loss
+
+        model.compile(loss=[loss, 'categorical_crossentropy'], loss_weights=[self.alpha, 1 - self.alpha],
                       optimizer=sgd, metrics=['accuracy', selective_acc, coverage])
 
         historytemp = model.fit_generator(my_generator(datagen.flow, self.x_train, self.y_train,

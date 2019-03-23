@@ -19,7 +19,7 @@ from selectivnet_utils import *
 
 class CatsvsDogVgg:
     def __init__(self, train=True, filename="weightsvgg.h5", coverage=0.8, alpha=0.5, baseline=False):
-        self.lamda = coverage
+        self.coverage = coverage
         self.alpha = alpha
         self.mc_dropout_rate = K.variable(value=0)
         self.num_classes = 2
@@ -209,7 +209,7 @@ class CatsvsDogVgg:
         self.y_test = keras.utils.to_categorical(y_test_label, self.num_classes + 1)
 
     def train(self, model):
-        c = self.lamda
+        c = self.coverage
         lamda = 32
 
         def selective_loss(y_true, y_pred):
