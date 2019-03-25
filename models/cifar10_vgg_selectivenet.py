@@ -213,10 +213,10 @@ class cifar10vgg:
     def train(self, model, mode):
         c = self.coverage
         r = self.risk
-        lamda = 32
+        lamda = 1/32
 
         def coverage_loss(y_true, y_pred):
-            loss = -K.mean(y_pred[:, -1]) + lamda * K.maximum(r - K.categorical_crossentropy(
+            loss = -K.mean(y_pred[:, -1]) + lamda * (r - K.categorical_crossentropy(
                 K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1]), 0) ** 2
             return loss
 
