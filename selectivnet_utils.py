@@ -62,7 +62,7 @@ def train_full_coverage(model_name, model_cls, coverages, model_baseline=None, r
     save_dict("results/{}.json".format(model_name), results)
 
 
-def train_max_risk(model_name, model_cls, lamda, risk, model_baseline=None, regression=False, alpha=0.5):
+def train_by_risk(model_name, model_cls, lamda, risk, model_baseline=None, regression=False, alpha=0.5):
     results = {}
     print("training model with full coverage")
 

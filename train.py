@@ -23,11 +23,12 @@ model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H
 baseline_name = args.baseline
 lamda = args.llambda
 risk = args.risk
-
+risks = np.flip(np.arange(risk, step=risk/10))[:6]
 
 
 if baseline_name == "none":
-        results = train_max_risk(model_name, cifar10Selective, lamda, risk, regression=False, alpha=args.alpha)
+        for risk in risks:
+                results = train_by_risk(model_name, cifar10Selective, lamda, risk, regression=False, alpha=args.alpha)
 # else:
 #     model_baseline = model_cls(train=to_train("{}.h5".format(baseline_name)),
 #                                filename="{}.h5".format(baseline_name),
