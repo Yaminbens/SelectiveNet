@@ -14,7 +14,7 @@ parser.add_argument('--model_name', type=str, default='coverage_loss')
 parser.add_argument('--baseline', type=str, default='none')
 parser.add_argument('--alpha', type=float, default=0.5)
 parser.add_argument('--llambda', type=float, default=1/32)
-parser.add_argument('--risk', type=float, default=0.048)
+parser.add_argument('--risk', type=float, default=0.03)
 
 args = parser.parse_args()
 
