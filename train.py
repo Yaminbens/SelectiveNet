@@ -19,12 +19,11 @@ parser.add_argument('--risk', type=float, default=0.048)
 args = parser.parse_args()
 
 model_cls = MODELS[args.dataset]
-model_name = args.model_name + datetime.datetime.now().strftime("%Y_%m_%d_%H%M")
+model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H%M")
 baseline_name = args.baseline
 lamda = args.llambda
 risk = args.risk
 
-coverages = [0.95, 0.9, 0.85, 0.8, 0.75, 0.7]
 
 
 if baseline_name == "none":

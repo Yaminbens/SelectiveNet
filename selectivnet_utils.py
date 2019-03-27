@@ -67,7 +67,7 @@ def train_max_risk(model_name, model_cls, lamda, risk, model_baseline=None, regr
     print("training model with full coverage")
 
     model = model_cls(train=True,
-                      filename="{}_{}.h5".format(model_name, risk),
+                      filename="{}_r{}_l{}.h5".format(model_name, risk, lamda),
                       lamda=lamda,
                       risk=risk,
                       alpha=alpha)
