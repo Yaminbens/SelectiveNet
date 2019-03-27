@@ -1,12 +1,13 @@
 import pickle
 from bokeh.plotting import figure, output_file, show
 from bokeh.layouts import column, row
+from bokeh.models.widgets import TextInput
 
 import numpy as np
 
 
 def open_history(filename):
-    with open("checkpoints\{}.pkl".format(filename), 'rb') as handle:
+    with open("checkpoints\{}".format(filename), 'rb') as handle:
         return pickle.load(handle)
 
 def create_plot_line(title,y):
@@ -14,8 +15,11 @@ def create_plot_line(title,y):
     p.line(np.arange(np.size(y)),y, line_width=2)
     return p
 
-hist = open_history('full_cov_2_1.0_history')
+file = "full_cov_2_1.0_history.pkl"
+# file = "coverage_loss2019_03_25_1014_0.048_history.pkl"
+hist = open_history(file)
 output_file("line.html")
+text_input = TextInput(value=file)
 train_plots = []
 val_plots = []
 for key in hist.keys():
@@ -24,6 +28,6 @@ for key in hist.keys():
     else:
         train_plots.append(create_plot_line(key,np.nan_to_num(hist[key])))
 
-show(column(row(train_plots), row(val_plots)))
+show(column(TextInput(value=file), row(train_plots), row(val_plots)))
 
 
