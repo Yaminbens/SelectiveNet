@@ -84,7 +84,7 @@ def train_by_risk(model_name, model_cls, lamda, risk, model_baseline=None, regre
             results[coverage]["baseline_risk"] = (1 - model_baseline.selective_risk_at_coverage(coverage))
         results[coverage]["percentage"] = 1 - results[coverage]["selective_risk"] / results[coverage]["baseline_risk"]
 
-    save_dict("results/{}.json".format(model_name), results)
+    save_dict("results/{}_{}.json".format(model_name,risk), results)
 
 def train_profile(model_name, model_cls, coverages, model_baseline=None, regression=False, alpha=0.5):
     results = {}

@@ -215,8 +215,8 @@ class cifar10vgg:
         lamda = self.lamda
 
         def coverage_loss(y_true, y_pred):
-            loss = -K.mean(y_pred[:, -1]) + lamda * (r - K.categorical_crossentropy(
-                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1])) ** 2
+            loss = -K.mean(y_pred[:, -1]) + lamda * K.maximum(-r + K.categorical_crossentropy(
+                K.repeat_elements(y_pred[:, -1:], self.num_classes, axis=1) * y_true[:, :-1], y_pred[:, :-1]), 0) ** 2
             return loss
 
         #need to redefine c - coverage
