@@ -13,7 +13,7 @@ parser.add_argument('--dataset', type=str, default='cifar_10')
 parser.add_argument('--model_name', type=str, default='coverage_loss')
 parser.add_argument('--baseline', type=str, default='none')
 parser.add_argument('--alpha', type=float, default=0.5)
-parser.add_argument('--llambda', type=float, default=4)
+parser.add_argument('--llambda', type=float, default=2)
 parser.add_argument('--risk', type=float, default=0.01)
 
 args = parser.parse_args()
@@ -23,7 +23,7 @@ model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H
 baseline_name = args.baseline
 lamda = args.llambda
 risk = args.risk
-risks = np.flip(np.arange(risk, step=risk/10))[:6]
+risks = [0.04,0.01,0.005,0.001,0.0005,0.0001]
 
 
 if baseline_name == "none":
