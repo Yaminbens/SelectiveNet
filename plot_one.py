@@ -51,7 +51,7 @@ def show_hists(hists, direc, params, mean):
 
         show(column(p))
 
-params = 'l=2_r=0.01'
+params = 'l=2_r=0.04_3103'
 direc = 'checkpoints/'+params
 files = os.listdir(direc)
 show_hists(files, direc, params, mean=1)

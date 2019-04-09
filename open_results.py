@@ -1,10 +1,15 @@
 import json
-
+import os
 def open_result(filename):
-    with open("results\{}".format(filename), 'r') as fp:
+    with open("results/0406/{}".format(filename), 'r') as fp:
         # json.dump(dict, fp)
         return json.load(fp)
 
 
-result = open_result('full_cov_2.json')
-print()
+direc = 'results/0406'
+files = os.listdir(direc)
+for file in files:
+    result = open_result(file)
+    print(file)
+    print(result)
+    print()

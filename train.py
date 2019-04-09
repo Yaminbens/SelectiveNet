@@ -23,11 +23,12 @@ model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H
 baseline_name = args.baseline
 lamda = args.llambda
 risk = args.risk
-risks = [0.04,0.01,0.005,0.001,0.0005,0.0001]
-
+# risks = [0.04,0.01,0.005,0.001,0.0005,0.0001]
+lamdas = [8,4,2,1,0.5,0.25]
 
 if baseline_name == "none":
-        for risk in risks:
+        # for risk in risks:
+        for lamda in lamdas:
                 results = train_by_risk(model_name, cifar10Selective, lamda, risk, regression=False, alpha=args.alpha)
 # else:
 #     model_baseline = model_cls(train=to_train("{}.h5".format(baseline_name)),
