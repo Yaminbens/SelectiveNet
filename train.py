@@ -19,17 +19,19 @@ parser.add_argument('--risk', type=float, default=0.01)
 args = parser.parse_args()
 
 model_cls = MODELS[args.dataset]
-model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H%M")
+#model_name = args.model_name +'_'+ datetime.datetime.now().strftime("%Y_%m_%d_%H%M")
+model_name = 'coverage_loss_2019_04_09_2029'
 baseline_name = args.baseline
 lamda = args.llambda
 risk = args.risk
 # risks = [0.04,0.01,0.005,0.001,0.0005,0.0001]
 lamdas = [8,4,2,1,0.5,0.25]
+train = False
 
 if baseline_name == "none":
         # for risk in risks:
         for lamda in lamdas:
-                results = train_by_risk(model_name, cifar10Selective, lamda, risk, regression=False, alpha=args.alpha)
+                results = train_by_risk(model_name, cifar10Selective, lamda, risk, train, regression=False, alpha=args.alpha)
 # else:
 #     model_baseline = model_cls(train=to_train("{}.h5".format(baseline_name)),
 #                                filename="{}.h5".format(baseline_name),

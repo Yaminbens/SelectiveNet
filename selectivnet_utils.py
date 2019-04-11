@@ -62,11 +62,11 @@ def train_full_coverage(model_name, model_cls, coverages, model_baseline=None, r
     save_dict("results/{}.json".format(model_name), results)
 
 
-def train_by_risk(model_name, model_cls, lamda, risk, model_baseline=None, regression=False, alpha=0.5):
+def train_by_risk(model_name, model_cls, lamda, risk, train, model_baseline=None, regression=False, alpha=0.5):
     results = {}
     print("training model with full coverage")
 
-    model = model_cls(train=True,
+    model = model_cls(train=train,
                       filename="{}_r{}_l{}.h5".format(model_name, risk, lamda),
                       lamda=lamda,
                       risk=risk,
@@ -84,7 +84,7 @@ def train_by_risk(model_name, model_cls, lamda, risk, model_baseline=None, regre
             results[coverage]["baseline_risk"] = (1 - model_baseline.selective_risk_at_coverage(coverage))
         results[coverage]["percentage"] = 1 - results[coverage]["selective_risk"] / results[coverage]["baseline_risk"]
 
-    save_dict("results/{}_{}.json".format(model_name,risk), results)
+    save_dict("results/{}_l={}_r={}.json".format(model_name, lamda, risk), results)
 
 def train_profile(model_name, model_cls, coverages, model_baseline=None, regression=False, alpha=0.5):
     results = {}
